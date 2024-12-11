@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pattern & Binary Knowledge Quiz Game</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to bottom right, #77c9d4, #57bc90);
+      color: #fff;
+      text-align: center;
+      padding: 20px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      font-size: 2.5rem;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 12px;
+      box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+      color: #333;
+    }
+
+    .menu-buttons button {
+      display: block;
+      width: 100%;
+      margin: 10px 0;
+      padding: 15px;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #fff;
+      background-color: #57bc90;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.2s;
+      box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    .menu-buttons button:hover {
+      background-color: #45a078;
+      transform: scale(1.03);
+    }
+
+    .menu-buttons button:active {
+      transform: scale(0.98);
+    }
+
+    .question {
+      margin-bottom: 20px;
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .options button {
+      padding: 15px 20px;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #fff;
+      background-color: #57bc90;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.2s;
+      box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    .options button:hover {
+      background-color: #45a078;
+      transform: scale(1.03);
+    }
+
+    .options button:active {
+      transform: scale(0.98);
+    }
+
+    .timer {
+      margin-top: 10px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #ff4e4e;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .team-members {
+      text-align: left;
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .team-members button, .play-again button {
+      padding: 10px 20px;
+      background-color: #57bc90;
+      border-radius: 8px;
+      color: white;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1);
+      transition: background-color 0.3s;
+    }
+
+    .team-members button:hover, .play-again button:hover {
+      background-color: #45a078;
+    }
+
+    .team-members button:active, .play-again button:active {
+      background-color: #379d66;
+    }
+
+    .play-again button {
+      margin-top: 20px;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Pattern & Binary Knowledge Quiz Game</h1>
+    <div id="menu">
+      <div class="menu-buttons">
+        <button onclick="startGame('play')">Play Mode (With Timer)</button>
+        <button onclick="startGame('practice')">Practice Mode (No Timer)</button>
+        <button onclick="showMembers()">See Members</button>
+      </div>
+    </div>
+
+    <div id="game" class="hidden">
+      <div class="timer hidden" id="timer"></div>
+      <div class="question" id="question">Question will appear here</div>
+      <div class="options" id="options"></div>
+    </div>
+
+    <div id="result" class="hidden">
+      <p id="score"></p>
+      <div class="play-again">
+        <button onclick="resetGame()">Play Again</button>
+      </div>
+    </div>
+
+    <div id="team-members" class="hidden">
+      <div class="team-members">
+        <h2>Group 6 Members:</h2>
+        <ul>
+          <li>Edzel Bales</li>
+          <li>Jinky Joy Escasinas</li>
+          <li>Christine Joy Encinares</li>
+          <li>Sherwin Godala</li>
+          <li>Jessica Piñaverde</li>
+        </ul>
+        <button onclick="hideMembers()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const questions = [
+      // Pattern Questions
+      { question: "It is the series of bonds or strips.", answer: "Stripes" },
+      { question: "A substance formed by trapped pockets of gas.", answer: "Foam" },
+      { question: "A series of sinus curves, bends, and loops.", answer: "Meander" },
+      { question: "A disturbance that transfers energy through matter.", answer: "Wave" },
+      { question: "A pattern of rotation and reflection.", answer: "Affine Transformations" },
+      { question: "It is a sense of balance or proportion.", answer: "Symmetry" },
+      { question: "It is the never-ending pattern.", answer: "Fractal" },
+      { question: "A pattern of separation of objects.", answer: "Fracture or Cracks" },
+      { question: "A pattern that emanates from a point.", answer: "Spiral" },
+      { question: "The covering of a surface using geometric shapes.", answer: "Tessellation" },
+
+      // Binary Knowledge Questions
+      { question: "A process converts the characters to integers.", answer: "Encoding" },
+      { question: "A bit appended to the data of binary bits to ensure that the total number of 1's in the data are even or odd.", answer: "Parity Bit" },
+      { question: "It is the smallest unit of information in a computer used for storing.", answer: "Bit" },
+      { question: "A set of error-correction codes used to detect and correct the errors.", answer: "Hamming" },
+      { question: "It is the smallest addressable unit of memory.", answer: "Byte" },
+      { question: "It is used in computer networking that refers to 8-bit quantity.", answer: "Octet" },
+      { question: "The simplest form of computer code or programming data represented by a system of digits consisting of a string of consecutive zeros and ones.", answer: "Binary Code" },
+      { question: "A numbering system that uses base 16.", answer: "Hexadecimal" },
+      { question: "A process converts the integers to characters.", answer: "Decoding" },
+      { question: "It is the small group of bits processed by the processor.", answer: "Word" }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+    let timer = 15;
+    let timerInterval;
+    const incorrectAnswers = [];
+
+    function startGame(mode) {
+      currentQuestion = 0;
+      score = 0;
+      timer = 15;
+      incorrectAnswers.length = 0;
+      document.getElementById("menu").classList.add("hidden");
+      document.getElementById("game").classList.remove("hidden");
+      document.getElementById("result").classList.add("hidden");
+      document.getElementById("team-members").classList.add("hidden");
+      showQuestion();
+      if (mode === 'play') {
+        document.getElementById("timer").classList.remove("hidden");
+        startTimer();
+      } else {
+        document.getElementById("timer").classList.add("hidden");
+      }
+    }
+
+    function showQuestion() {
+      const question = questions[currentQuestion];
+      document.getElementById("question").innerText = question.question;
+
+      const optionsContainer = document.getElementById("options");
+      optionsContainer.innerHTML = "";
+      const correctOption = question.answer;
+      const wrongOptions = questions
+        .filter((q, index) => index !== currentQuestion)
+        .map((q) => q.answer)
+        .slice(0, 3);
+
+      const options = [correctOption, ...wrongOptions];
+      options.sort(() => Math.random() - 0.5);
+
+      options.forEach((option) => {
+        const button = document.createElement("button");
+        button.innerText = option;
+        button.onclick = () => checkAnswer(option);
+        optionsContainer.appendChild(button);
+      });
+    }
+
+    function checkAnswer(selectedAnswer) {
+      const correctAnswer = questions[currentQuestion].answer;
+      if (selectedAnswer === correctAnswer) {
+        score++;
+      } else {
+        incorrectAnswers.push({
+          question: questions[currentQuestion].question,
+          selectedAnswer,
+          correctAnswer,
+        });
+      }
+      currentQuestion++;
+      if (currentQuestion < questions.length) {
+        showQuestion();
+        resetTimer();
+      } else {
+        endGame();
+      }
+    }
+
+    function resetTimer() {
+      clearInterval(timerInterval);
+      timer = 15;
+      document.getElementById("timer").innerText = `Time: ${timer}`;
+      startTimer();
+    }
+
+    function startTimer() {
+      timerInterval = setInterval(() => {
+        document.getElementById("timer").innerText = `Time: ${timer}s`;
+        if (timer === 0) {
+          clearInterval(timerInterval);
+          endGame();
+        } else {
+          timer--;
+        }
+      }, 1000);
+    }
+
+    function endGame() {
+      clearInterval(timerInterval);
+      document.getElementById("game").classList.add("hidden");
+      document.getElementById("result").classList.remove("hidden");
+      document.getElementById("score").innerText = `Your Score: ${score}/${questions.length}`;
+
+      if (incorrectAnswers.length > 0) {
+        const answerDetails = incorrectAnswers.map(
+          (answer) => `<li><strong>Question:</strong> ${answer.question}<br><strong>Your Answer:</strong> ${answer.selectedAnswer}<br><strong>Correct Answer:</strong> ${answer.correctAnswer}</li>`
+        ).join('');
+        document.getElementById("incorrect-answers").innerHTML = `<h3>Incorrect Answers:</h3><ul>${answerDetails}</ul>`;
+      }
+    }
+
+    function resetGame() {
+      document.getElementById("menu").classList.remove("hidden");
+      document.getElementById("result").classList.add("hidden");
+      document.getElementById("timer").classList.add("hidden");
+    }
+
+    function showMembers() {
+      document.getElementById("team-members").classList.remove("hidden");
+    }
+
+    function hideMembers() {
+      document.getElementById("team-members").classList.add("hidden");
+    }
+  </script>
+</body>
+</html>
